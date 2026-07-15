@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 
+from django.conf import settings
 
 from django.db import models
 
@@ -65,12 +66,16 @@ class User(AbstractUser):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to=User, on_delete=models.CASCADE,
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name="orders"
     )
 
     def __str__(self) -> str:
         return str(self.created_at)
+
+    def __repr__(self) -> str:
+        return f"<Order: {self.created_at}>"
 
     class Meta:
         ordering = ["-created_at"]
@@ -92,6 +97,9 @@ class Ticket(models.Model):
 
     def __str__(self) -> str:
         return f"{self.movie_session} (row: {self.row}, seat: {self.seat})"
+
+    def __repr__(self) -> str:
+        return f"<Ticket: {self.__str__()}>"
 
     def clean(self) -> None:
         cinema_hall = self.movie_session.cinema_hall
