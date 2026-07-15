@@ -8,13 +8,11 @@ from django.db.models import QuerySet
 
 from db.models import Order, Ticket
 
-
 @transaction.atomic
 def create_order(
         tickets: list[dict],
         username: str,
         date: datetime.date = None,
-
 ) -> Order:
 
     user = get_user_model().objects.get(username=username)
@@ -24,10 +22,6 @@ def create_order(
         order_data["created_at"] = date
 
     order = Order.objects.create(**order_data)
-
-    if date:
-        Order.objects.filter(pk=order.pk).update(created_at=date)
-        order.created_at = date
 
     for ticket_data in tickets:
         Ticket.objects.create(
