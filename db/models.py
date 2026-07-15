@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 
+from django.utils import timezone
+
 from django.conf import settings
 
 from django.db import models
@@ -64,7 +66,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -8,6 +8,7 @@ from django.db.models import QuerySet
 
 from db.models import Order, Ticket
 
+
 @transaction.atomic
 def create_order(
         tickets: list[dict],
@@ -17,11 +18,15 @@ def create_order(
 
     user = get_user_model().objects.get(username=username)
 
+    # Збираємо дані для створення
     order_data = {"user": user}
     if date:
         order_data["created_at"] = date
 
+    # Створюємо ордер ОДИН раз із потрібною датою
     order = Order.objects.create(**order_data)
+
+    # Зайвий блок з update() ми повністю видалили!
 
     for ticket_data in tickets:
         Ticket.objects.create(
