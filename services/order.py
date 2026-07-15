@@ -19,11 +19,15 @@ def create_order(
 
     user = get_user_model().objects.get(username=username)
 
-    order = Order.objects.create(user=user)
+    order_data = {"user": user}
+    if date:
+        order_data["created_at"] = date
+
+    order = Order.objects.create(**order_data)
 
     if date:
+        Order.objects.filter(pk=order.pk).update(created_at=date)
         order.created_at = date
-        order.save()
 
     for ticket_data in tickets:
         Ticket.objects.create(
@@ -36,7 +40,7 @@ def create_order(
     return order
 
 
-def get_orders(username: str = None) -> Order | QuerySet[Order, Order]:
+def get_orders(username: str = None) -> QuerySet[Order]:
 
     if username:
         return Order.objects.filter(user__username=username)
